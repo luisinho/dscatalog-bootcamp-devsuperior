@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { makeRequest } from '../../core/utils/request';
+import { makeRequest } from 'core/utils/request';
 import ProductCard from './components/ProductCard';
-import { ProductsResponse } from '../../core/types/Product';
+import { ProductsResponse } from 'core/types/Product';
 import './styles.scss';
 import ProductCardLoader from './components/Loaders/ProductCarLoader';
+import Pagination from 'core/Pagination';
 
 const Catalog = () => {
 
@@ -12,11 +13,13 @@ const Catalog = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    const [activePage, setActivePage] = useState(0);
+
     useEffect(() => {
 
      const params = {
-        page: 0,
-        linesPerPage: 12
+        page: activePage,
+        linesPerPage: 10
      }
 
      setIsLoading(true);
@@ -26,7 +29,7 @@ const Catalog = () => {
           setIsLoading(false);
        });
 
-    }, []);
+    }, [activePage]);
 
    return (
      <div className="catalog-container">
@@ -42,6 +45,12 @@ const Catalog = () => {
              ))
             )}
         </div>
+        {productsResponse && (
+          <Pagination 
+            totalPage={productsResponse.totalPages} 
+            activePage={activePage} 
+            onChange={page => setActivePage(page)}/>
+         )}
      </div>    
    );
 }

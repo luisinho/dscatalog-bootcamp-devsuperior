@@ -2,5 +2,6 @@
     "eslint.debug": true,
     "eslint.format.enable": true,
     "eslint.lintTask.enable": true,
-    "json.schemas": []
+    "json.schemas": [],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }
