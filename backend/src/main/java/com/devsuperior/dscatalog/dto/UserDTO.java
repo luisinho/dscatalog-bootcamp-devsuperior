@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -17,9 +18,10 @@ public class UserDTO implements Serializable {
 
 	@NotBlank(message = "Campo obrigatŕio")
 	private String firstName;
-	private String lastName;
-	
-	@Email(message = "Favor entrar um email válido")
+	private String lastName;	
+
+	// @Column(unique = true)
+	@Email(message = "Favor entrar um email válido")	
 	private String email;
 
 	private Set<RoleDTO> roles = new HashSet<RoleDTO>();
