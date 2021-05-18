@@ -89,7 +89,7 @@ public class ProductService {
 			throw new DataBaseException("Integrity violation");
 		}
 	}
-	
+
 	private void copyDtoToEntity(ProductDTO dto, Product entity) {
 
 		entity.setName(dto.getName());
