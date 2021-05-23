@@ -79,7 +79,7 @@ const Login = () => {
                         {errors.password.message}
                      </div>
                    )}                </div>
-                <Link to="/admin/auth/recover" className="login-link-recover">
+                <Link to="/auth/recover" className="login-link-recover">
                     Esqueci a senha?
                 </Link>
                 <div className="login-submit">
