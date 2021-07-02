@@ -17,9 +17,9 @@ const BaseForm = ({ title, children } : Props) => {
     return (
         <div className="admin-base-form card-base">
              <h1 className="base-form-title">
-                 { title }
-                 { children }
+                 { title }                 
              </h1>
+             { children }
              <div className="base-form-actions">
                  <button 
                     className="btn btn-outline-danger border-radius-10 mr-3"
