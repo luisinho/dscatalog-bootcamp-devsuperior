@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { makeRequest } from 'core/utils/request';
 import ProductCard from './components/ProductCard';
 import { ProductsResponse } from 'core/types/Product';
-import './styles.scss';
 import ProductCardLoader from './components/Loaders/ProductCarLoader';
 import Pagination from 'core/Pagination';
+import './styles.scss';
 
 const Catalog = () => {
 
