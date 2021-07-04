@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useHistory } from 'react-router';
-import { Link } from 'react-router-dom';
-import { makeRequest } from 'core/utils/request';
+import { toast } from 'react-toastify';
+
+import { makePrivateRequest, makeRequest } from 'core/utils/request';
 import { ProductsResponse } from 'core/types/Product';
 import Card from '../Card';
 import Pagination from 'core/Pagination';
@@ -16,26 +17,45 @@ const List = () => {
 
     const history = useHistory();
 
+    const getProducts = useCallback(() => {
+
+        const params = {
+           page: activePage,
+           linesPerPage: 4,
+           direction: 'DESC',
+           orderBy: 'id'
+        }
+
+        setIsLoading(true);
+        makeRequest({ url: '/products', params})
+          .then(response => setProductsResponse(response.data))
+          .finally(() => {
+             setIsLoading(false);
+        });
+    }, [activePage]);
+
     useEffect(() => {
-
-     const params = {
-        page: activePage,
-        linesPerPage: 4,
-        direction: 'DESC',
-        orderBy: 'id'
-     }
-
-     setIsLoading(true);
-     makeRequest({ url: '/products', params})         
-       .then(response => setProductsResponse(response.data))
-       .finally(() => {
-          setIsLoading(false);
-       });
-
-    }, [activePage]);    
+        getProducts();
+    }, [getProducts]);
 
     const handleCreate = () => {
         history.push('/admin/products/create');
+    }
+
+    const onRemove = (produtId: number) => {
+
+        const confirm = window.confirm('Deseja relamente excluir este produto?');
+
+        if (confirm) {
+
+            makePrivateRequest({ url: `/products/${produtId}`, method: 'DELETE'})
+            .then(() => {
+                toast.info('Produto removido com sucesso!');
+                getProducts();
+            }).catch(() => {
+                toast.error('Erro ao remover produto!');
+            });
+        }
     }
 
     return (
@@ -45,7 +65,7 @@ const List = () => {
             </button>
             <div className="admin-list-container">
                 {productsResponse?.content.map(product => (
-                    <Card key={product.id} product={product} />
+                    <Card key={product.id} product={product} onRemove={onRemove}/>
                 ))}
 
                 {productsResponse && (
