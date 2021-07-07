@@ -1,11 +1,12 @@
-import ButtonIcon from 'core/components/Buttonicon';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+
+import ButtonIcon from 'core/components/Buttonicon';
 import AuthCard from '../Card';
-import './styles.scss';
 import { makeLogin } from 'core/utils/request';
 import { saveSessionData } from 'core/utils/auth';
+import './styles.scss';
 
 type FormState = {
     username: string;
@@ -29,7 +30,7 @@ const Login = () => {
     const { from } = location.state || { from: {pathname: "/admin"} };
 
     const onSubmit = (data: FormState) => {
-          console.log(data);
+
           makeLogin(data)
           .then(response => {
             setHasError(false);

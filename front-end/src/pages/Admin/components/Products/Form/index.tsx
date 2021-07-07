@@ -1,16 +1,20 @@
-import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router';
+import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import Select from 'react-select';
 
+import { Category } from 'core/types/Product';
 import { makePrivateRequest, makeRequest } from 'core/utils/request';
 import BaseForm from '../../BaseForm';
-import { useHistory, useParams } from 'react-router';
-import { useEffect } from 'react';
+import './styles.scss';
 
 type FormsState = {
     name: string;
-    price: number;  
+    price: number;
     description: string;
     imgUrl: string;
+    categories: Category[];
 }
 
 type ParamsType = {
@@ -19,11 +23,15 @@ type ParamsType = {
 
 const Form = () => {
 
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormsState>();
+    const { register, handleSubmit, formState: { errors }, setValue, control } = useForm<FormsState>();
 
     const history = useHistory();
 
     const { productId } = useParams<ParamsType>();
+
+    const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+
+    const [categories, setCategories] = useState<Category[]>([]);
 
     const isEditing = productId !== 'create';
 
@@ -37,9 +45,18 @@ const Form = () => {
                 setValue('price', response.data.price);
                 setValue('description', response.data.description);
                 setValue('imgUrl', response.data.imgUrl);
+                setValue('categories', response.data.categories);
             });
         }
     }, [productId, isEditing, setValue]);
+
+    useEffect(() => {
+        setIsLoadingCategories(true);
+        makeRequest({ url: '/categories'})
+        .then(response => setCategories(response.data.content))
+        .finally(() => setIsLoadingCategories(false));
+
+    }, []);
 
     const onSubmit = (formData: FormsState) => {
 
@@ -79,14 +96,28 @@ const Form = () => {
                                 </div>
                             )}
                         </div>
-                        {/*<select
-                        value={formData.category}
-                        name="category"
-                        onChange={handleOnChange} className="form-control mb-5 input-base">
-                            <option value="1">Livros</option>
-                            <option value="3">Computadores</option>
-                            <option value="2">Eletrônicos</option>
-                        </select>*/}
+                        <div className="margin-bottom-30">
+                            <Controller
+                                name="categories"
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field }) => <Select
+                                  {...field}
+                                  options={categories}
+                                  getOptionLabel={(option: Category) => option.name}
+                                  getOptionValue={(option: Category) => String(option.id)}
+                                  classNamePrefix="categories-select"
+                                  placeholder="Categorias"
+                                  isLoading={isLoadingCategories}
+                                  isMulti
+                                />}
+                            />
+                            {errors.categories && (
+                                <div className="invalid-feedback d-block">
+                                   Campo obrigatorio
+                                </div>
+                            )}
+                        </div>
                         <div className="margin-bottom-30">
                             <input
                                 {...register("price", {required: "Campo obrigatorio"})}
