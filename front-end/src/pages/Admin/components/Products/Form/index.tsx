@@ -7,9 +7,10 @@ import Select from 'react-select';
 import { Category } from 'core/types/Product';
 import { makePrivateRequest, makeRequest } from 'core/utils/request';
 import BaseForm from '../../BaseForm';
+import PriceField from './PriceField';
 import './styles.scss';
 
-type FormsState = {
+export type FormsState = {
     name: string;
     price: number;
     description: string;
@@ -101,6 +102,7 @@ const Form = () => {
                                 name="categories"
                                 control={control}
                                 rules={{ required: true }}
+                                defaultValue=""
                                 render={({ field }) => <Select
                                   {...field}
                                   options={categories}
@@ -119,13 +121,7 @@ const Form = () => {
                             )}
                         </div>
                         <div className="margin-bottom-30">
-                            <input
-                                {...register("price", {required: "Campo obrigatorio"})}
-                                type="number"
-                                name="price"
-                                className="form-control input-base"
-                                placeholder="Preço"
-                            />
+                            <PriceField control={control}/>
                             {errors.price && (
                                 <div className="invalid-feedback d-block">
                                    {errors.price.message}
