@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.devsuperior.dscatalog.dto.ProductDTO;
+import com.devsuperior.dscatalog.services.FileProductService;
 import com.devsuperior.dscatalog.services.ProductService;
 
 @RestController
@@ -29,6 +30,9 @@ public class ProductResource {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private FileProductService fileProductService;
 
 	@GetMapping
 	public ResponseEntity<Page<ProductDTO>> findAll(
@@ -62,6 +66,8 @@ public class ProductResource {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				 .buildAndExpand(dto.getId()).toUri();
 
+		this.fileProductService.deleteFileWithoutProduct();
+
 		return ResponseEntity.created(uri).body(dto);
 	}
 
@@ -69,6 +75,8 @@ public class ProductResource {
 	public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) {
 
 		dto = this.productService.update(id, dto);
+
+		this.fileProductService.deleteFileWithoutProduct();
 
 		return ResponseEntity.ok().body(dto);
 	}

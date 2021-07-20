@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -32,6 +33,7 @@ public class Product implements Serializable {
 	private String description;
 
 	private Double price;
+
 	private String imgUrl;
 
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
@@ -43,17 +45,22 @@ public class Product implements Serializable {
 	inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private Set<Category> categories = new HashSet<Category>();
 
+	@OneToOne
+	@JoinColumn(name = "file_product_id")
+	private FileProduct  fileProduct;
+
 	public Product() {
 
 	}
 
-	public Product(Long id, String name, String description, Double price, String imgUrl, Instant date) {		
+	public Product(Long id, String name, String description, Double price, String imgUrl, Instant date, FileProduct  fileProduct) {		
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
 		this.imgUrl = imgUrl;
 		this.date = date;
+		this.fileProduct = fileProduct;
 	}
 
 	public Long getId() {
@@ -108,6 +115,14 @@ public class Product implements Serializable {
 		return categories;
 	}
 
+	public FileProduct getFileProduct() {
+		return fileProduct;
+	}
+
+	public void setFileProduct(FileProduct fileProduct) {
+		this.fileProduct = fileProduct;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -131,6 +146,5 @@ public class Product implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-	
+	}	
 }

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.dscatalog.dto.ProductDTO;
 import com.devsuperior.dscatalog.entities.Category;
+import com.devsuperior.dscatalog.entities.FileProduct;
 import com.devsuperior.dscatalog.entities.Product;
 import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
@@ -31,14 +32,19 @@ public class ProductService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
+	@Autowired
+	private FileProductService fileProductService;
+
 	@Transactional(readOnly = true)
 	public Page<ProductDTO> findAllPaged(Long categoryId, String name, PageRequest pageRequest) {
 
 		List<Category> categories = (categoryId == 0) ? null :  Arrays.asList(this.categoryRepository.getOne(categoryId));
 
-		Page<Product> list = this.productRepository.find(categories, name, pageRequest);
+		Page<Product> page = this.productRepository.find(categories, name, pageRequest);
 
-		return list.map(prod -> new ProductDTO(prod));
+		this.productRepository.find(page.toList());
+
+		return page.map(prod -> new ProductDTO(prod, prod.getCategories()));
 	}
 
 	@Transactional(readOnly = true)
@@ -92,11 +98,25 @@ public class ProductService {
 
 	private void copyDtoToEntity(ProductDTO dto, Product entity) {
 
+		FileProduct fileProduct = null;
+
 		entity.setName(dto.getName());
 		entity.setDescription(dto.getDescription());
 		entity.setDate(dto.getDate());
-		entity.setImgUrl(dto.getImgUrl());
 		entity.setPrice(dto.getPrice());
+
+		if (dto.getFileProduct() != null) {
+			fileProduct = this.fileProductService.findByIdForSaveProduct(dto.getFileProduct().getId());
+		}
+
+		if (fileProduct != null && entity.getImgUrl() != null) {
+			entity.setFileProduct(fileProduct);
+			entity.setImgUrl(null);
+		} else if(fileProduct != null && entity.getImgUrl() == null) {
+			entity.setFileProduct(fileProduct);
+		} else if(fileProduct == null && entity.getImgUrl() != null) {
+			entity.setImgUrl(dto.getImgUrl());
+		}
 
 		entity.getCategories().clear();
 

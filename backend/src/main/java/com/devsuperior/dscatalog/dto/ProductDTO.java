@@ -29,10 +29,13 @@ public class ProductDTO  implements Serializable {
 
 	@Positive(message = "Preço deve ser um valor positivo")
 	private Double price;
+
 	private String imgUrl;
 
 	@PastOrPresent(message = "A data do produto não pode se futura")
 	private Instant date;
+
+	private FileProductDTO fileProduct;
 
 	private List<CategoryDTO> categories = new ArrayList<CategoryDTO>();
 
@@ -48,6 +51,10 @@ public class ProductDTO  implements Serializable {
 		this.price = entity.getPrice();
 		this.imgUrl = entity.getImgUrl();
 		this.date = entity.getDate();
+
+		if (entity.getFileProduct() != null) {
+			this.fileProduct = new FileProductDTO(entity.getFileProduct());
+		}
 	}
 
 	public ProductDTO(Product entity, Set<Category> categories) {
@@ -112,6 +119,14 @@ public class ProductDTO  implements Serializable {
 
 	public void setDate(Instant date) {
 		this.date = date;
+	}
+
+	public FileProductDTO getFileProduct() {
+		return fileProduct;
+	}
+
+	public void setFileProduct(FileProductDTO fileProduct) {
+		this.fileProduct = fileProduct;
 	}
 
 	public List<CategoryDTO> getCategories() {
